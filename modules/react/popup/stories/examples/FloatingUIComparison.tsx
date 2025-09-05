@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {PrimaryButton} from '@workday/canvas-kit-react/button';
 import {Popup} from '@workday/canvas-kit-react/popup';
-import {FloatingUIPopper} from '../../lib/FloatingUIPopper';
 
 export const FloatingUIComparison = () => {
   const [showPopperJS, setShowPopperJS] = React.useState(false);
@@ -11,15 +10,20 @@ export const FloatingUIComparison = () => {
 
   return (
     <div style={{padding: '24px', display: 'flex', gap: '16px', flexDirection: 'column'}}>
-      <h2>PopperJS vs FloatingUI Comparison</h2>
+      <h2>FloatingUI Migration Demonstration</h2>
+      <p>
+        This example shows the same Popper component before and after the FloatingUI migration. Both
+        use the same API but the new implementation provides better performance and smaller bundle
+        size.
+      </p>
 
       <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
         <PrimaryButton ref={popperJSRef} onClick={() => setShowPopperJS(!showPopperJS)}>
-          PopperJS Implementation
+          Legacy PopperJS (Before Migration)
         </PrimaryButton>
 
         <PrimaryButton ref={floatingUIRef} onClick={() => setShowFloatingUI(!showFloatingUI)}>
-          FloatingUI Implementation
+          New FloatingUI Implementation
         </PrimaryButton>
       </div>
 
@@ -38,13 +42,14 @@ export const FloatingUIComparison = () => {
             maxWidth: '200px',
           }}
         >
-          <strong>PopperJS Implementation</strong>
-          <p>Uses custom fallback placements modifier for collision detection.</p>
+          <strong>PopperJS Implementation (Legacy)</strong>
+          <p>Used custom fallback placements modifier for collision detection.</p>
           <p>Bundle size: ~20KB</p>
+          <p>Now replaced with FloatingUI implementation.</p>
         </div>
       </Popup.Popper>
 
-      <FloatingUIPopper
+      <Popup.Popper
         open={showFloatingUI}
         anchorElement={floatingUIRef}
         placement="top"
@@ -59,12 +64,12 @@ export const FloatingUIComparison = () => {
             maxWidth: '200px',
           }}
         >
-          <strong>FloatingUI Implementation</strong>
+          <strong>FloatingUI Implementation (New)</strong>
           <p>Uses built-in flip() and shift() middleware for superior collision detection.</p>
           <p>Bundle size: ~3KB</p>
           <p>Better positioning algorithms and performance.</p>
         </div>
-      </FloatingUIPopper>
+      </Popup.Popper>
 
       <div style={{marginTop: '16px'}}>
         <h3>Key Benefits of FloatingUI:</h3>

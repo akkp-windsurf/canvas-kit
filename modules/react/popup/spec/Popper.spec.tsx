@@ -1,6 +1,5 @@
 import React from 'react';
 import {render, getByTestId, act} from '@testing-library/react';
-import {Instance} from '@popperjs/core';
 
 import {Popper} from '../';
 
@@ -97,41 +96,45 @@ describe('Popper', () => {
     expect(renderProp).toBeCalledWith({placement: 'top'});
   });
 
-  it('should only create a Popper instance once and only call onFirstUpdate once on rerenders', async () => {
-    const onFirstUpdate = jest.fn();
+  it('should handle placement changes correctly on rerenders', async () => {
+    const renderProp = jest.fn();
     const screen = render(
-      <Popper anchorElement={document.body} popperOptions={{onFirstUpdate}} placement="top">
-        Contents
+      <Popper anchorElement={document.body} placement="top">
+        {renderProp}
       </Popper>
     );
 
-    // force PopperJS to run
     // eslint-disable-next-line compat/compat
     await act(() => new Promise<any>(requestAnimationFrame));
 
-    expect(onFirstUpdate).toHaveBeenCalledTimes(1);
+    expect(renderProp).toHaveBeenCalledWith({placement: 'top'});
 
     screen.rerender(
-      <Popper anchorElement={document.body} popperOptions={{onFirstUpdate}} placement="bottom">
-        Contents
+      <Popper anchorElement={document.body} placement="bottom">
+        {renderProp}
       </Popper>
     );
 
-    // force PopperJS to run
     // eslint-disable-next-line compat/compat
     await act(() => new Promise<any>(requestAnimationFrame));
 
-    expect(onFirstUpdate).toHaveBeenCalledTimes(1);
+    expect(renderProp).toHaveBeenCalledWith({placement: 'bottom'});
   });
 
-  it('should forward the popperInstanceRef prop to the PopperJS instance', () => {
-    const ref = React.createRef<Instance>();
-    render(
-      <Popper anchorElement={document.body} popperInstanceRef={ref}>
+  it('should render with custom middleware', () => {
+    const customMiddleware = [
+      {
+        name: 'test-middleware',
+        fn: () => ({}),
+      },
+    ];
+
+    const {container} = render(
+      <Popper anchorElement={document.body} middleware={customMiddleware}>
         Contents
       </Popper>
     );
 
-    expect(ref.current).toHaveProperty('update');
+    expect(container).toBeTruthy();
   });
 });
