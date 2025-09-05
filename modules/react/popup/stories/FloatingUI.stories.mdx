@@ -1,0 +1,44 @@
+import {Meta} from '@storybook/addon-docs';
+
+<Meta title="Components/Popups/Popup/FloatingUI Migration" />
+
+# FloatingUI Migration Spike
+
+This spike explores migrating Canvas Kit's popup positioning from @popperjs/core to @floating-ui/dom.
+
+## Key Benefits
+
+1. **Better Size Handling**: The size middleware automatically resizes popups to fit available space
+2. **Smaller Bundle Size**: @floating-ui is more tree-shakeable than @popperjs
+3. **More Explicit API**: Less magic, more control over positioning logic
+
+## Examples
+
+### Size Middleware Demo
+
+The size middleware automatically constrains popup dimensions to available space, preventing overflow issues.
+
+### FloatingUI vs PopperJS Comparison
+
+Compare the behavior of the old PopperJS implementation with the new FloatingUI implementation in restricted spaces.
+
+## Usage
+
+Enable FloatingUI implementation with the `useFloatingUI` prop:
+
+```tsx
+<Popup.Popper useFloatingUI enableSizeMiddleware>
+  <Popup.Card>
+    {/* Content automatically resizes to fit available space */}
+  </Popup.Card>
+</Popup.Popper>
+```
+
+## Migration Path
+
+The implementation maintains backward compatibility through feature flags, allowing for gradual migration:
+
+1. **Phase 1**: Opt-in with `useFloatingUI` prop
+2. **Phase 2**: A/B testing and validation
+3. **Phase 3**: Default to FloatingUI implementation
+4. **Phase 4**: Remove PopperJS implementation (breaking change)
