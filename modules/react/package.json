@@ -49,6 +49,7 @@
     "@emotion/is-prop-valid": "^1.1.1",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@floating-ui/dom": "^1.6.1",
     "@popperjs/core": "^2.5.4",
     "@tanstack/react-virtual": "^3.13.9",
     "@workday/canvas-colors-web": "^2.0.0",

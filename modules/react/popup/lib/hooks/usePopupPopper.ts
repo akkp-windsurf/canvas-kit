@@ -28,5 +28,7 @@ export const usePopupPopper = createElemPropsHook(usePopupModel)(({state, events
     anchorElement: state.targetRef,
     ref: elementRef,
     onPlacementChange,
+    useFloatingUI: false,
+    enableSizeMiddleware: true,
   };
 });
