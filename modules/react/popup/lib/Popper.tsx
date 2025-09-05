@@ -85,7 +85,7 @@ export interface PopperProps {
   popperInstanceRef?: React.Ref<Instance>;
   /**
    * Enable the new FloatingUI implementation with size middleware for better popup sizing
-   * @default false
+   * @default true
    */
   useFloatingUI?: boolean;
   /**
@@ -155,7 +155,7 @@ export const Popper = React.forwardRef<HTMLDivElement, PopperProps>(
     {
       portal = true,
       open = true,
-      useFloatingUI = false,
+      useFloatingUI = true,
       placement,
       fallbackPlacements,
       ...elemProps
