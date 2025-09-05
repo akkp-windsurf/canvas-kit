@@ -13,6 +13,7 @@ import {FocusTrap as FocusTrapExample} from './examples/FocusTrap';
 import {RTL as RTLExample} from './examples/RTL';
 import {CustomTarget as CustomTargetExample} from './examples/CustomTarget';
 import {FullScreen as FullScreenExample} from './examples/FullScreen';
+import {FloatingUIComparison as FloatingUIComparisonExample} from './examples/FloatingUIComparison';
 
 export default {
   title: 'Components/Popups/Popup',
@@ -53,4 +54,7 @@ export const CustomTarget: Story = {
 };
 export const FullScreen: Story = {
   render: FullScreenExample,
+};
+export const FloatingUIComparison: Story = {
+  render: FloatingUIComparisonExample,
 };

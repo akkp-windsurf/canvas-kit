@@ -13,7 +13,7 @@ import {
 } from '@workday/canvas-kit-react/common';
 
 import {useMenuModel} from './useMenuModel';
-import {defaultMenuPopperOptions, useMenuPopper} from './MenuPopper';
+import {defaultMenuMiddleware, useMenuPopper} from './MenuPopper';
 import {MenuItem, StyledMenuItem, useMenuItemArrowReturn, useMenuItemFocus} from './MenuItem';
 import {MenuCard} from './MenuCard';
 import {MenuList} from './MenuList';
@@ -39,7 +39,7 @@ export const SubmenuPopper = createSubcomponent('div')({
   elemPropsHook: useMenuPopper,
 })<ExtractProps<typeof Popper>>(({children, ...elemProps}) => {
   return (
-    <Popper placement="right-start" popperOptions={defaultMenuPopperOptions} {...elemProps}>
+    <Popper placement="right-start" middleware={defaultMenuMiddleware} {...elemProps}>
       {children}
     </Popper>
   );

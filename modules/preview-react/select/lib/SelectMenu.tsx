@@ -11,6 +11,7 @@ import {
   useReturnFocus,
   useTransferOnFullscreenExit,
 } from '@workday/canvas-kit-react/popup';
+import {flip, offset, Middleware} from '@floating-ui/react-dom';
 import {colors, borderRadius, inputColors} from '@workday/canvas-kit-react/tokens';
 
 import {SelectProps} from './Select';
@@ -167,65 +168,38 @@ const MenuList = styled('ul')<Pick<SelectProps, 'error' | 'theme'>>(
   })
 );
 
-const generatePopperOptions = (
-  props: Pick<SelectMenuProps, 'menuRef' | 'placement' | 'shouldAutoFlip' | 'shouldAutoFocus'>
-) => {
-  const {menuRef, placement, shouldAutoFlip, shouldAutoFocus} = props;
+const generateMiddleware = (
+  props: Pick<SelectMenuProps, 'placement' | 'shouldAutoFlip'>
+): Middleware[] => {
+  const {placement, shouldAutoFlip} = props;
 
   let fallbackPlacements: Placement[] = [];
   if (shouldAutoFlip) {
     fallbackPlacements = placement === 'top' ? ['bottom'] : ['top'];
   }
 
-  const modifiers = [
-    {
-      name: 'flip',
-      options: {
-        fallbackPlacements,
-      },
-    },
-    {
-      name: 'offset',
-      options: {
-        offset: () => {
-          const skidding = 0;
+  const skidding = 0;
+  // Displace menu towards the button to obscure the bottom
+  // edge of the button and to create a smooth visual
+  // connection between the button and the menu
+  const distance = -parseInt(borderRadius.m, 10);
 
-          // Displace menu towards the button to obscure the bottom
-          // edge of the button and to create a smooth visual
-          // connection between the button and the menu
-          const distance = -parseInt(borderRadius.m, 10);
-
-          return [skidding, distance];
-        },
-      },
-    },
-    {
-      name: 'preventOverflow',
-      options: {
-        // Ensure the menu stays aligned with its reference (button),
-        // even if that means the menu is pushed out of view
-        mainAxis: false,
-      },
-    },
-    {
-      // Disable the fallbackModifier as SelectMenu is properly handled by the
-      // flip modifier through shouldAutoFlip prop
-      name: 'fallbackModifier',
-      enabled: false,
-    },
+  const middleware: Middleware[] = [
+    offset({
+      mainAxis: distance,
+      crossAxis: skidding,
+    }),
   ];
 
-  return {
-    modifiers,
-    // TODO: Consider using a more general-purpose focus function here rather
-    // than relying on Popper's onFirstUpdate for better control over how
-    // focus is managed
-    onFirstUpdate: () => {
-      if (shouldAutoFocus && menuRef && menuRef.current) {
-        menuRef.current.focus();
-      }
-    },
-  };
+  if (shouldAutoFlip) {
+    middleware.push(
+      flip({
+        fallbackPlacements,
+      })
+    );
+  }
+
+  return middleware;
 };
 
 /**
@@ -282,15 +256,19 @@ export const SelectMenu = ({
   useReturnFocus(model);
   useTransferOnFullscreenExit(model);
 
+  React.useLayoutEffect(() => {
+    if (shouldAutoFocus && menuRef && menuRef.current && visibility === 'opened') {
+      menuRef.current.focus();
+    }
+  }, [shouldAutoFocus, menuRef, visibility]);
+
   return (
     <Popper
       placement={placement}
       anchorElement={buttonRef}
-      popperOptions={generatePopperOptions({
-        menuRef,
+      middleware={generateMiddleware({
         placement,
         shouldAutoFlip,
-        shouldAutoFocus,
       })}
       ref={model.state.stackRef}
     >
