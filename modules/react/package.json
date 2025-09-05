@@ -50,6 +50,7 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@popperjs/core": "^2.5.4",
+    "@floating-ui/dom": "^1.6.1",
     "@tanstack/react-virtual": "^3.13.9",
     "@workday/canvas-colors-web": "^2.0.0",
     "@workday/canvas-kit-popup-stack": "^13.2.26",

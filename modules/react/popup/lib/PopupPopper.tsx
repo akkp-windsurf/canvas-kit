@@ -22,6 +22,24 @@ export interface PopupPopperProps extends PopperProps {
    * The additional options passed to the Popper's `popper.js` instance.
    */
   popperOptions?: Partial<PopperOptions>;
+  /**
+   * Enable FloatingUI implementation instead of PopperJS
+   * @default false
+   */
+  useFloatingUI?: boolean;
+  /**
+   * Enable automatic sizing with FloatingUI (only works when useFloatingUI=true)
+   * @default true
+   */
+  enableSizeMiddleware?: boolean;
+  /**
+   * Maximum width constraint for FloatingUI size middleware
+   */
+  maxWidth?: number;
+  /**
+   * Maximum height constraint for FloatingUI size middleware
+   */
+  maxHeight?: number;
 }
 
 // We moved this out of the component function to prevent rebuilding this object on re-renders.
