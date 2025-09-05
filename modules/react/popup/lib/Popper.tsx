@@ -15,6 +15,7 @@ export const defaultFallbackPlacements: Placement[] = ['top', 'right', 'bottom',
 import {usePopupStack} from './hooks';
 import {useLocalRef} from '@workday/canvas-kit-react/common';
 import {fallbackPlacementsModifier} from './fallbackPlacements';
+import {FloatingPopper, FloatingPopperProps} from './FloatingPopper';
 
 export interface PopperProps {
   /**
@@ -81,6 +82,24 @@ export interface PopperProps {
    * instance like `update`.
    */
   popperInstanceRef?: React.Ref<Instance>;
+  /**
+   * Enable FloatingUI implementation instead of PopperJS
+   * @default false
+   */
+  useFloatingUI?: boolean;
+  /**
+   * Enable automatic sizing with FloatingUI (only works when useFloatingUI=true)
+   * @default true
+   */
+  enableSizeMiddleware?: boolean;
+  /**
+   * Maximum width constraint for FloatingUI size middleware
+   */
+  maxWidth?: number;
+  /**
+   * Maximum height constraint for FloatingUI size middleware
+   */
+  maxHeight?: number;
 }
 
 /**
@@ -98,15 +117,36 @@ export interface PopperProps {
  * > `div` element was rendered and that's where extra props were spread to. In v5+, you can provide
  * > your own element if you wish.
  */
-export const Popper = React.forwardRef<HTMLDivElement, PopperProps>(
-  ({portal = true, open = true, ...elemProps}: PopperProps, ref) => {
-    if (!open) {
-      return null;
-    }
-
-    return <OpenPopper ref={ref} portal={portal} {...elemProps} />;
+export const Popper = React.forwardRef<HTMLDivElement, PopperProps>((props: PopperProps, ref) => {
+  const {portal = true, open = true, useFloatingUI = false, ...elemProps} = props;
+  if (!open) {
+    return null;
   }
-);
+
+  if (useFloatingUI) {
+    const {
+      enableSizeMiddleware,
+      maxWidth,
+      maxHeight,
+      popperOptions,
+      popperInstanceRef,
+      ...restProps
+    } = elemProps;
+    const floatingProps: FloatingPopperProps = {
+      ...restProps,
+      portal,
+      open,
+      enableSizeMiddleware,
+      maxWidth,
+      maxHeight,
+      popperOptions,
+      popperInstanceRef,
+    };
+    return <FloatingPopper ref={ref} {...floatingProps} />;
+  }
+
+  return <OpenPopper ref={ref} portal={portal} {...elemProps} />;
+});
 
 const getElementFromRefOrElement = (
   input: React.RefObject<Element> | Element | null
