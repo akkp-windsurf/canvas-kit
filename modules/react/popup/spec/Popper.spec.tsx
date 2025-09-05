@@ -100,7 +100,12 @@ describe('Popper', () => {
   it('should only create a Popper instance once and only call onFirstUpdate once on rerenders', async () => {
     const onFirstUpdate = jest.fn();
     const screen = render(
-      <Popper anchorElement={document.body} popperOptions={{onFirstUpdate}} placement="top">
+      <Popper
+        anchorElement={document.body}
+        popperOptions={{onFirstUpdate}}
+        placement="top"
+        useFloatingUI={false}
+      >
         Contents
       </Popper>
     );
@@ -112,7 +117,12 @@ describe('Popper', () => {
     expect(onFirstUpdate).toHaveBeenCalledTimes(1);
 
     screen.rerender(
-      <Popper anchorElement={document.body} popperOptions={{onFirstUpdate}} placement="bottom">
+      <Popper
+        anchorElement={document.body}
+        popperOptions={{onFirstUpdate}}
+        placement="bottom"
+        useFloatingUI={false}
+      >
         Contents
       </Popper>
     );
@@ -127,7 +137,7 @@ describe('Popper', () => {
   it('should forward the popperInstanceRef prop to the PopperJS instance', () => {
     const ref = React.createRef<Instance>();
     render(
-      <Popper anchorElement={document.body} popperInstanceRef={ref}>
+      <Popper anchorElement={document.body} popperInstanceRef={ref} useFloatingUI={false}>
         Contents
       </Popper>
     );

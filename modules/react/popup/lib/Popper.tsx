@@ -8,6 +8,8 @@ import {
   createPopper,
 } from '@popperjs/core';
 
+import {FloatingPopper} from './FloatingPopper';
+
 export type Placement = `${PopperJSPlacement}`; // Use template literals to make documentation list them out
 export type PopperOptions = Options;
 export const defaultFallbackPlacements: Placement[] = ['top', 'right', 'bottom', 'left'];
@@ -81,6 +83,24 @@ export interface PopperProps {
    * instance like `update`.
    */
   popperInstanceRef?: React.Ref<Instance>;
+  /**
+   * Enable the new FloatingUI implementation with size middleware for better popup sizing
+   * @default true
+   */
+  useFloatingUI?: boolean;
+  /**
+   * Enable the size middleware when using FloatingUI implementation
+   * @default true
+   */
+  enableSizeMiddleware?: boolean;
+  /**
+   * Maximum width for the popup when using size middleware
+   */
+  maxWidth?: number;
+  /**
+   * Maximum height for the popup when using size middleware
+   */
+  maxHeight?: number;
 }
 
 /**
@@ -98,13 +118,78 @@ export interface PopperProps {
  * > `div` element was rendered and that's where extra props were spread to. In v5+, you can provide
  * > your own element if you wish.
  */
+// Convert PopperJS placement to FloatingUI placement
+const convertPlacementToFloatingUI = (
+  placement?: Placement
+): import('./FloatingPopper').FloatingUIPlacement | undefined => {
+  if (!placement) {
+    return undefined;
+  }
+
+  switch (placement) {
+    case 'auto':
+      return 'bottom';
+    case 'auto-start':
+      return 'bottom-start';
+    case 'auto-end':
+      return 'bottom-end';
+    default:
+      return placement as import('./FloatingPopper').FloatingUIPlacement;
+  }
+};
+
+// Convert array of PopperJS placements to FloatingUI placements
+const convertFallbackPlacementsToFloatingUI = (
+  placements?: Placement[]
+): import('./FloatingPopper').FloatingUIPlacement[] | undefined => {
+  if (!placements) {
+    return undefined;
+  }
+  return placements
+    .map(convertPlacementToFloatingUI)
+    .filter(Boolean) as import('./FloatingPopper').FloatingUIPlacement[];
+};
+
 export const Popper = React.forwardRef<HTMLDivElement, PopperProps>(
-  ({portal = true, open = true, ...elemProps}: PopperProps, ref) => {
+  (
+    {
+      portal = true,
+      open = true,
+      useFloatingUI = true,
+      placement,
+      fallbackPlacements,
+      ...elemProps
+    }: PopperProps,
+    ref
+  ) => {
     if (!open) {
       return null;
     }
 
-    return <OpenPopper ref={ref} portal={portal} {...elemProps} />;
+    if (useFloatingUI) {
+      const floatingUIPlacement = convertPlacementToFloatingUI(placement);
+      const floatingUIFallbackPlacements =
+        convertFallbackPlacementsToFloatingUI(fallbackPlacements);
+      return (
+        <FloatingPopper
+          ref={ref}
+          portal={portal}
+          placement={floatingUIPlacement}
+          fallbackPlacements={floatingUIFallbackPlacements}
+          {...elemProps}
+        />
+      );
+    }
+
+    return (
+      <OpenPopper
+        ref={ref}
+        portal={portal}
+        placement={placement}
+        fallbackPlacements={fallbackPlacements}
+        {...elemProps}
+      />
+    );
   }
 );
 
